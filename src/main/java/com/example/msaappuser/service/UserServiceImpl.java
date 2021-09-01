@@ -5,6 +5,7 @@ import com.example.msaappuser.jpa.UserEntity;
 import com.example.msaappuser.jpa.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -14,8 +15,11 @@ public class UserServiceImpl implements UserService{
 
     UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    BCryptPasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -24,7 +28,7 @@ public class UserServiceImpl implements UserService{
         ModelMapper mm = new ModelMapper();
         mm.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity userEntity = mm.map(userDto, UserEntity.class);
-        userEntity.setEncryptedPwd("todo_devel");
+        userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
 
         userRepository.save(userEntity);
 
