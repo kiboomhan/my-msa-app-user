@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
 
     private Environment env;
@@ -26,14 +26,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("health_check")
+    @GetMapping("/status")
     public String status() {
-        return "msa-app-user!!";
+        return String.format("msa-app-user > port %s", env.getProperty("local.server.port"));
     }
 
     @GetMapping("welcome")
     public String welcome() {
-//        return env.getProperty("greeting.message");
+        //        return env.getProperty("greeting.message");
         return greeting.getMessage();
     }
 
