@@ -1,6 +1,7 @@
 package com.example.msaappuser.controller;
 
 import com.example.msaappuser.dto.UserDto;
+import com.example.msaappuser.jpa.UserEntity;
 import com.example.msaappuser.service.UserService;
 import com.example.msaappuser.vo.Greeting;
 import com.example.msaappuser.vo.RequestUser;
@@ -11,6 +12,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -49,6 +53,27 @@ public class UserController {
         ResponseUser responseUser = mm.map(userDto, ResponseUser.class);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseUser);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userList = userService.getUserByAll();
+
+        List<ResponseUser> result = new ArrayList<>();
+        userList.forEach(v -> {
+            result.add(new ModelMapper().map(v, ResponseUser.class));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        ResponseUser returnValue = new ModelMapper().map(userDto, ResponseUser.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
 }

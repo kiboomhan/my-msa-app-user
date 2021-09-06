@@ -3,11 +3,15 @@ package com.example.msaappuser.service;
 import com.example.msaappuser.dto.UserDto;
 import com.example.msaappuser.jpa.UserEntity;
 import com.example.msaappuser.jpa.UserRepository;
+import com.example.msaappuser.vo.ResponseOrder;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,5 +37,24 @@ public class UserServiceImpl implements UserService{
         userRepository.save(userEntity);
 
         return mm.map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public UserDto getUserByUserId(String userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
+        if (userEntity == null)
+            throw new UsernameNotFoundException("User not found");
+
+        List<ResponseOrder> orders = new ArrayList<>();
+        userDto.setOrders(orders);
+
+        return userDto;
+    }
+
+    @Override
+    public Iterable<UserEntity> getUserByAll() {
+        return userRepository.findAll();
     }
 }
