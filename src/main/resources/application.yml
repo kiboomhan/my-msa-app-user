@@ -24,3 +24,11 @@ eureka:
 
 greeting:
   message: Welcome E-Commerce.
+
+logging:
+  level:
+    com.example.msaappuser: DEBUG
+
+token:
+  expiration_time: 86400000
+  secret: important_key
