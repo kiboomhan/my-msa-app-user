@@ -32,7 +32,11 @@ public class UserController {
 
     @GetMapping("/status")
     public String status() {
-        return String.format("msa-app-user > port %s", env.getProperty("local.server.port"));
+        return String.format("msa-app-user : ") +
+                String.format("\n > port(local.server.port) = %s", env.getProperty("local.server.port")) +
+                String.format("\n > port(server.port) = %s", env.getProperty("server.port")) +
+                String.format("\n > config(token.secret) = %s", env.getProperty("token.secret")) +
+                String.format("\n > config(token.expiration_time) = %s", env.getProperty("token.expiration_time")) ;
     }
 
     @GetMapping("welcome")

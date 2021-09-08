@@ -1,0 +1,6 @@
+#레거시 방법으로 신규 방식으로 전환
+#spring:
+#  cloud:
+#    config:
+#      uri: http://127.0.0.1:8888
+#      name: ecommerce
