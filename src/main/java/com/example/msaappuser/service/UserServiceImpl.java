@@ -1,16 +1,15 @@
 package com.example.msaappuser.service;
 
+import com.example.msaappuser.client.OrderServiceClient;
 import com.example.msaappuser.dto.UserDto;
 import com.example.msaappuser.jpa.UserEntity;
 import com.example.msaappuser.jpa.UserRepository;
 import com.example.msaappuser.vo.ResponseOrder;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,15 +29,15 @@ public class UserServiceImpl implements UserService {
 
     BCryptPasswordEncoder passwordEncoder;
 
-    RestTemplate restTemplate;
-
     Environment env;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RestTemplate restTemplate, Environment env) {
+    OrderServiceClient orderServiceClient;
+
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, Environment env, OrderServiceClient orderServiceClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.restTemplate = restTemplate;
         this.env = env;
+        this.orderServiceClient = orderServiceClient;
     }
 
     @Override
@@ -77,10 +75,21 @@ public class UserServiceImpl implements UserService {
 //        List<ResponseOrder> orders = new ArrayList<>();
 
         /* Rest Template 활용 */
-        String orderUrl = String.format(env.getProperty("order-service.url"), userId);
+        /*String orderUrl = String.format(env.getProperty("order-service.url"), userId);
         ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET,
                 null, new ParameterizedTypeReference<List<ResponseOrder>>() {});
-        List<ResponseOrder> ordersList = orderListResponse.getBody();
+        List<ResponseOrder> ordersList = orderListResponse.getBody();*/
+
+        /* Feign Client 활용 */
+//        List<ResponseOrder> ordersList = null;
+//        try {
+//            ordersList = orderServiceClient.getOrders(userId);
+//        } catch (FeignException ex) {
+//            log.error(ex.getMessage());
+//        }
+
+        List<ResponseOrder> ordersList = orderServiceClient.getOrders(userId);
+
         userDto.setOrders(ordersList);
         return userDto;
     }

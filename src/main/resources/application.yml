@@ -40,7 +40,7 @@ greeting:
 
 logging:
   level:
-    com.example.msaappuser: DEBUG
+    com.example.msaappuser.client: DEBUG
 
 #token:
 #  expiration_time: 86400000
