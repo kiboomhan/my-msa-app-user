@@ -6,6 +6,7 @@ import com.example.msaappuser.service.UserService;
 import com.example.msaappuser.vo.Greeting;
 import com.example.msaappuser.vo.RequestUser;
 import com.example.msaappuser.vo.ResponseUser;
+import io.micrometer.core.annotation.Timed;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
@@ -31,6 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/status")
+    @Timed(value = "users.status", longTask = true)
     public String status() {
         return String.format("msa-app-user : ") +
                 String.format("\n > port(local.server.port) = %s", env.getProperty("local.server.port")) +
@@ -40,6 +42,7 @@ public class UserController {
     }
 
     @GetMapping("welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome() {
         //        return env.getProperty("greeting.message");
         return greeting.getMessage();
